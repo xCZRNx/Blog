@@ -8,6 +8,12 @@ defmodule Blog.Accounts.User do
     field :hashed_password, :string, redact: true
     field :current_password, :string, virtual: true, redact: true
     field :confirmed_at, :utc_datetime
+    field :bio, :string
+    field :is_admin, :boolean, default: false
+    field :is_blocked, :boolean, default: false
+
+    has_many :posts, Blog.Posts.Post
+    has_many :comments, Blog.Posts.Comment
 
     timestamps(type: :utc_datetime)
   end
@@ -53,7 +59,7 @@ defmodule Blog.Accounts.User do
   defp validate_password(changeset, opts) do
     changeset
     |> validate_required([:password])
-    |> validate_length(:password, min: 12, max: 72)
+    |> validate_length(:password, min: 8, max: 72)
     # Examples of additional password validation:
     # |> validate_format(:password, ~r/[a-z]/, message: "at least one lower case character")
     # |> validate_format(:password, ~r/[A-Z]/, message: "at least one upper case character")
@@ -158,4 +164,23 @@ defmodule Blog.Accounts.User do
       add_error(changeset, :current_password, "is not valid")
     end
   end
+
+  def bio_changeset(user, attrs) do
+    user
+    |> cast(attrs, [:bio])
+    |> validate_length(:bio, max: 500)
+  end
+
+  def admin_changeset(user, attrs) do
+    user
+    |> cast(attrs, [:is_admin])
+    |> validate_inclusion(:is_admin, [true, false])
+  end
+
+  def block_changeset(user, attrs) do
+    user
+    |> cast(attrs, [:is_blocked])
+    |> validate_inclusion(:is_blocked, [true, false])
+  end
+
 end

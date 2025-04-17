@@ -68,6 +68,8 @@ defmodule BlogWeb.Router do
       on_mount: [{BlogWeb.UserAuth, :ensure_authenticated}] do
       live "/users/settings", UserSettingsLive, :edit
       live "/users/settings/confirm_email/:token", UserSettingsLive, :confirm_email
+      live "/blog", BlogPagesLive.BlogLive
+      live "/blog/post/:id", BlogPagesLive.PostLive
     end
   end
 
