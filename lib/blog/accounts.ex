@@ -350,4 +350,10 @@ defmodule Blog.Accounts do
       {:error, :user, changeset, _} -> {:error, changeset}
     end
   end
+
+  def update_admin(%User{} = user, attrs) do
+    user
+    |> User.admin_changeset(attrs)
+    |> Repo.update()
+  end
 end

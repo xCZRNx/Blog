@@ -182,5 +182,4 @@ defmodule Blog.Accounts.User do
     |> cast(attrs, [:is_blocked])
     |> validate_inclusion(:is_blocked, [true, false])
   end
-
 end

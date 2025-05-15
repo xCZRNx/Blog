@@ -195,7 +195,6 @@ defmodule BlogWeb.UserAuth do
     end
   end
 
-
   def redirect_if_user_is_not_admin(conn, _opts) do
     if conn.assigns[:current_user].is_admin do
       conn

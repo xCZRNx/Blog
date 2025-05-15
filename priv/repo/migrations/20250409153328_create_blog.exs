@@ -27,7 +27,6 @@ defmodule Blog.Repo.Migrations.CreateBlog do
       add :bio, :string
       add :is_admin, :boolean
       add :is_blocked, :boolean
-  end
-
+    end
   end
 end

@@ -70,6 +70,7 @@ defmodule BlogWeb.Router do
       live "/users/settings/confirm_email/:token", UserSettingsLive, :confirm_email
       live "/blog", BlogPagesLive.BlogLive
       live "/blog/post/:id", BlogPagesLive.PostLive
+      live "/blog/admin", BlogPagesLive.AdminTableLive
     end
   end
 

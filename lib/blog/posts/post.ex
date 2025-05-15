@@ -19,10 +19,15 @@ defmodule Blog.Posts.Post do
     |> validate_required([:body, :status, :user_id])
   end
 
+  def update_changeset(post, attrs) do
+    post
+    |> cast(attrs, [:body, :status])
+    |> validate_required([:body, :status])
+  end
+
   def likes_count_changeset(post, attrs) do
     post
     |> cast(attrs, [:likes_count])
     |> validate_required([:likes_count])
   end
-
 end

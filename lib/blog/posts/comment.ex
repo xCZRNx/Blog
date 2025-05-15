@@ -13,8 +13,8 @@ defmodule Blog.Posts.Comment do
     timestamps()
   end
 
-  def changeset(comment, attrs) do
-    comment
+  def changeset(attrs) do
+    %__MODULE__{}
     |> cast(attrs, [:body, :status, :post_id, :user_id])
     |> validate_required([:body, :status, :post_id, :user_id])
   end
@@ -24,6 +24,4 @@ defmodule Blog.Posts.Comment do
     |> cast(attrs, [:likes_count])
     |> validate_required([:likes_count])
   end
-
-
 end

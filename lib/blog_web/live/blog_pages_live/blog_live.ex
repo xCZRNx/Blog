@@ -1,7 +1,6 @@
 defmodule BlogWeb.BlogPagesLive.BlogLive do
   use BlogWeb, :live_view
 
-
   alias Blog.Posts
   alias Blog.Posts.Post
   alias Blog.Repo
@@ -13,7 +12,12 @@ defmodule BlogWeb.BlogPagesLive.BlogLive do
         BLOG PAGE
       </.header>
       <div class="flex justify-end mb-4">
-        <.button phx-click="new_post" phx-value-id={"new_post"} id="new_post" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+        <.button
+          phx-click="new_post"
+          phx-value-id="new_post"
+          id="new_post"
+          class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+        >
           New Post
         </.button>
       </div>
@@ -26,11 +30,15 @@ defmodule BlogWeb.BlogPagesLive.BlogLive do
         <%= for post <- @posts do %>
           <.link href={"/blog/post/#{post.id}"}>View details</.link>
           <div class="border p-4 mb-4 rounded bg-white shadow-sm">
-            <h2 class="text-lg font-bold text-gray-800"><%= post.user.email %></h2>
-            <p class="text-gray-700"><%= post.body %></p>
+            <h2 class="text-lg font-bold text-gray-800">{post.user.email}</h2>
+            <p class="text-gray-700">{post.body}</p>
             <div class="likes mt-4 flex items-center justify-between">
-              <p class="text-sm text-gray-600">Likes: <%= post.likes_count %></p>
-              <.button phx-click="like_post" phx-value-id={post.id} class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600">
+              <p class="text-sm text-gray-600">Likes: {post.likes_count}</p>
+              <.button
+                phx-click="like_post"
+                phx-value-id={post.id}
+                class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600"
+              >
                 Like
               </.button>
             </div>
@@ -39,20 +47,24 @@ defmodule BlogWeb.BlogPagesLive.BlogLive do
       <% end %>
 
       <%= if @live_action == :new_post do %>
-        <.modal id="new_post_modal" show={true} on_cancel={JS.navigate(~p"/blog")} >
+        <.modal id="new_post_modal" show={true} on_cancel={JS.navigate(~p"/blog")}>
           <div class="w-full h-full">
             <.header class="text-xl font-bold mb-4">New Post</.header>
-            <.simple_form
-              for={@form}
-              id="new_post_form"
-              phx-submit="create_post"
-              class="space-y-4"
-            >
-              <.input field={@form[:body]} type="text" label="Post Body" required class="w-full px-3 py-2 border rounded" />
+            <.simple_form for={@form} id="new_post_form" phx-submit="create_post" class="space-y-4">
+              <.input
+                field={@form[:body]}
+                type="text"
+                label="Post Body"
+                required
+                class="w-full px-3 py-2 border rounded"
+              />
               <.input field={@form[:status]} type="hidden" value={:active} required />
               <.input field={@form[:user_id]} type="hidden" value={@current_user.id} required />
               <:actions>
-                <.button phx-disable-with="Creating post..." class="w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                <.button
+                  phx-disable-with="Creating post..."
+                  class="w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                >
                   Create Post
                 </.button>
               </:actions>
@@ -64,14 +76,12 @@ defmodule BlogWeb.BlogPagesLive.BlogLive do
     """
   end
 
-  def mount(_params, session, socket) do
+  def mount(_params, _session, socket) do
     if connected?(socket) do
       BlogWeb.Endpoint.subscribe("posts")
     end
 
-    IO.inspect(session)
-
-    posts = Posts.list_posts()
+    posts = Posts.list_active_posts()
 
     changeset = Post.changeset(%{})
 
@@ -83,7 +93,6 @@ defmodule BlogWeb.BlogPagesLive.BlogLive do
 
     {:ok, socket}
   end
-
 
   def handle_event("create_post", %{"post" => post_params}, socket) do
     case Posts.create_post(post_params) do
@@ -98,11 +107,10 @@ defmodule BlogWeb.BlogPagesLive.BlogLive do
     end
   end
 
-
   def handle_event("like_post", %{"id" => post_id}, socket) do
-    post = Posts.get_post!(post_id) |> IO.inspect()
+    post = Posts.get_post!(post_id)
 
-    Posts.increment_post_likes(post) |> IO.inspect()
+    Posts.increment_post_likes(post)
 
     posts = Posts.list_posts()
 
@@ -114,13 +122,10 @@ defmodule BlogWeb.BlogPagesLive.BlogLive do
   end
 
   def handle_info(%{topic: "posts", event: "new-post", payload: post}, socket) do
-      post = Repo.preload(post, :user)
+    post = Repo.preload(post, :user)
 
-      IO.inspect(socket.assigns.current_user)
-
-      {:noreply, assign(socket, posts: [post | socket.assigns.posts])}
+    {:noreply, assign(socket, posts: [post | socket.assigns.posts])}
   end
-
 
   defp assign_form(socket, %Ecto.Changeset{} = changeset) do
     form = to_form(changeset, as: "post")
@@ -131,5 +136,4 @@ defmodule BlogWeb.BlogPagesLive.BlogLive do
       assign(socket, form: form)
     end
   end
-
 end

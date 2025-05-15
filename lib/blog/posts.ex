@@ -20,6 +20,15 @@ defmodule Blog.Posts do
     |> Repo.preload([:user, :comments])
   end
 
+  def list_active_posts() do
+    from(p in Post,
+      where: p.status == :active,
+      order_by: [desc: :inserted_at],
+      preload: [:user, :comments]
+    )
+    |> Repo.all()
+  end
+
   @doc """
   Gets a single post.
 
@@ -39,6 +48,7 @@ defmodule Blog.Posts do
       {:ok, post} ->
         BlogWeb.Endpoint.broadcast("posts", "new-post", post)
         {:ok, post}
+
       {:error, changeset} ->
         {:error, changeset}
     end
@@ -49,7 +59,7 @@ defmodule Blog.Posts do
   """
   def update_post(%Post{} = post, attrs) do
     post
-    |> Post.changeset(attrs)
+    |> Post.update_changeset(attrs)
     |> Repo.update()
   end
 
@@ -60,12 +70,12 @@ defmodule Blog.Posts do
     Repo.delete(post)
   end
 
-  @doc """
-  Returns an `%Ecto.Changeset{}` for tracking post changes.
-  """
-  def change_post(%Post{} = post, attrs \\ %{}) do
-    Post.changeset(post, attrs)
-  end
+  # @doc """
+  # Returns an `%Ecto.Changeset{}` for tracking post changes.
+  # """
+  # def change_post(%Post{} = post, attrs \\ %{}) do
+  #   Post.changeset(post, attrs)
+  # end
 
   @doc """
   Increments the likes count for a post.
@@ -98,19 +108,27 @@ defmodule Blog.Posts do
   Creates a comment.
   """
   def create_comment(attrs \\ %{}) do
-    %Comment{}
-    |> Comment.changeset(attrs)
+    attrs
+    |> Comment.changeset()
     |> Repo.insert()
+    |> case do
+      {:ok, comment} ->
+        BlogWeb.Endpoint.broadcast("comment", "new-comment", comment)
+        {:ok, comment}
+
+      {:error, changeset} ->
+        {:error, changeset}
+    end
   end
 
-  @doc """
-  Updates a comment.
-  """
-  def update_comment(%Comment{} = comment, attrs) do
-    comment
-    |> Comment.changeset(attrs)
-    |> Repo.update()
-  end
+  # @doc """
+  # Updates a comment.
+  # """
+  # def update_comment(%Comment{} = comment, attrs) do
+  #   comment
+  #   |> Comment.changeset(attrs)
+  #   |> Repo.update()
+  # end
 
   @doc """
   Deletes a comment.
@@ -119,12 +137,12 @@ defmodule Blog.Posts do
     Repo.delete(comment)
   end
 
-  @doc """
-  Returns an `%Ecto.Changeset{}` for tracking comment changes.
-  """
-  def change_comment(%Comment{} = comment, attrs \\ %{}) do
-    Comment.changeset(comment, attrs)
-  end
+  # @doc """
+  # Returns an `%Ecto.Changeset{}` for tracking comment changes.
+  # """
+  # def change_comment(%Comment{} = comment, attrs \\ %{}) do
+  #   Comment.changeset(comment, attrs)
+  # end
 
   @doc """
   Increments the likes count for a comment.
