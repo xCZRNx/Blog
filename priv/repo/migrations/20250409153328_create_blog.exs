@@ -1,7 +1,7 @@
 defmodule Blog.Repo.Migrations.CreateBlog do
   use Ecto.Migration
 
-  def up do
+  def change do
     create table(:posts) do
       add :body, :string
       add :status, :string
@@ -28,14 +28,5 @@ defmodule Blog.Repo.Migrations.CreateBlog do
       add :is_admin, :boolean
       add :is_blocked, :boolean
     end
-  end
-
-  def down do
-    drop_if_exists table(:comments_gpt)
-    drop_if_exists table(:users_tokens)
-    drop_if_exists table(:comments)
-    drop_if_exists table(:posts_gpt)
-    drop_if_exists table(:posts)
-    drop_if_exists table(:users)
   end
 end
