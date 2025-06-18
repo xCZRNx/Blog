@@ -42,7 +42,7 @@ defmodule BlogWeb.BlogLive.Index do
 
   def handle_event("like", %{"id" => id}, socket) do
     post = Posts.get_post!(id)
-    {:ok, updated_post} = Posts.update_post(post, %{likes_count: post.likes_count + 1})
+    {:ok, _updated_post} = Posts.update_post(post, %{likes_count: post.likes_count + 1})
     {:noreply, socket}
   end
 

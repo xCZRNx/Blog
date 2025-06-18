@@ -35,4 +35,12 @@ defmodule BlogWeb.Admin.BlogLive.Index do
       if post.id == updated_post.id, do: updated_post, else: post
     end)
   end
+
+  defp status_badge_class(status) do
+    base_classes = "px-2 inline-flex text-xs leading-5 font-semibold rounded-full"
+    case status do
+      :active -> "#{base_classes} bg-green-100 text-green-800"
+      :banned -> "#{base_classes} bg-red-100 text-red-800"
+    end
+  end
 end
