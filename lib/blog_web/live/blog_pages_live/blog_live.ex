@@ -112,7 +112,7 @@ defmodule BlogWeb.BlogPagesLive.BlogLive do
 
     Posts.increment_post_likes(post)
 
-    posts = Posts.list_posts()
+    posts = Posts.list_active_posts()
 
     {:noreply, assign(socket, posts: posts)}
   end
