@@ -19,4 +19,10 @@ defmodule Blog.Posts.Post do
     |> validate_required([:body, :user_id])
     |> foreign_key_constraint(:user_id)
   end
+
+  def status_changeset(post, attrs) do
+    post
+    |> cast(attrs, [:status])
+    |> validate_required([:status])
+  end
 end
