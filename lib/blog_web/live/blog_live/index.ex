@@ -51,6 +51,7 @@ defmodule BlogWeb.BlogLive.Index do
     end
   end
 
+  @impl true
   def render(assigns) do
     ~H"""
     <div>
@@ -60,9 +61,9 @@ defmodule BlogWeb.BlogLive.Index do
         <div class="modal">
           <div class="modal-content">
             <h2>New Post</h2>
-            <.form let={f} for={@changeset} phx-submit="save">
-              <%= textarea f, :body, placeholder: "Write your post...", required: true %>
-              <%= hidden_input f, :status, value: "active" %>
+            <.form for={@changeset} as={:post} phx-submit="save">
+              <.input field={:body} type="textarea" placeholder="Write your post..." required />
+              <.input field={:status} type="hidden" value="active" />
               <div>
                 <button type="submit">Submit</button>
                 <button type="button" phx-click="hide_modal">Cancel</button>

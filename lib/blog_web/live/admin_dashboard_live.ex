@@ -19,7 +19,7 @@ defmodule BlogWeb.AdminDashboardLive do
   end
 
   @impl true
-  def handle_event("change_status", %{"id" => id, "status" => status}, socket) do
+  def handle_event("change_status", %{"post_id" => id, "new_status" => status}, socket) do
     post = Posts.get_post!(id)
     # Convert status string to atom if needed
     status_atom = if is_atom(status), do: status, else: String.to_existing_atom(status)
@@ -31,6 +31,7 @@ defmodule BlogWeb.AdminDashboardLive do
     end
   end
 
+  @impl true
   def render(assigns) do
     ~H"""
     <div>
@@ -54,8 +55,8 @@ defmodule BlogWeb.AdminDashboardLive do
             <td><%= post.likes_count %></td>
             <td>
               <form phx-submit="change_status">
-                <input type="hidden" name="id" value={post.id} />
-                <select name="status">
+                <input type="hidden" name="post_id" value={post.id} />
+                <select name="new_status">
                   <option value="active" selected={post.status == :active}>active</option>
                   <option value="banned" selected={post.status == :banned}>banned</option>
                 </select>

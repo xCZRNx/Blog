@@ -53,6 +53,7 @@ defmodule BlogWeb.BlogLive.Show do
     end
   end
 
+  @impl true
   def render(assigns) do
     ~H"""
     <div>
@@ -66,8 +67,8 @@ defmodule BlogWeb.BlogLive.Show do
         <div class="modal">
           <div class="modal-content">
             <h4>New Comment</h4>
-            <.form let={f} for={@changeset} phx-submit="save">
-              <%= textarea f, :body, placeholder: "Write your comment...", required: true %>
+            <.form for={@changeset} as={:comment} phx-submit="save">
+              <.input field={:body} type="textarea" placeholder="Write your comment..." required />
               <div>
                 <button type="submit">Submit</button>
                 <button type="button" phx-click="hide_modal">Cancel</button>
