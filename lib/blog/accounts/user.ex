@@ -8,6 +8,8 @@ defmodule Blog.Accounts.User do
     field :hashed_password, :string, redact: true
     field :current_password, :string, virtual: true, redact: true
     field :confirmed_at, :utc_datetime
+    field :is_admin, :boolean, default: false
+    field :is_blocked, :boolean, default: false
 
     timestamps(type: :utc_datetime)
   end
@@ -157,5 +159,14 @@ defmodule Blog.Accounts.User do
     else
       add_error(changeset, :current_password, "is not valid")
     end
+  end
+
+  @doc """
+  Grants admin rights to the user.
+  """
+  def grant_admin_rights_changeset(user, attrs \\ %{}) do
+    user
+    |> cast(attrs, [])
+    |> change(is_admin: true)
   end
 end

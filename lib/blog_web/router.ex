@@ -82,4 +82,12 @@ defmodule BlogWeb.Router do
       live "/users/confirm", UserConfirmationInstructionsLive, :new
     end
   end
+
+  scope "/", BlogWeb do
+    pipe_through [:browser, :require_authenticated_user]
+
+    live "/blog", PostLive.Index, :index       # Blog Main Page: list all posts
+    live "/posts/:id", PostLive.Show, :show      # Post Detail Page: show full details of a post
+    live "/admin/dashboard", AdminDashboardLive, :index  # Admin Dashboard: manage posts
+  end
 end
