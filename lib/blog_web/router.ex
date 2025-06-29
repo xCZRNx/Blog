@@ -17,10 +17,26 @@ defmodule BlogWeb.Router do
     plug :accepts, ["json"]
   end
 
+  pipeline :require_admin do
+    plug :require_authenticated_user
+    plug :ensure_admin
+  end
+
   scope "/", BlogWeb do
     pipe_through :browser
 
     get "/", PageController, :home
+    live "/blog", BlogLive.Index, :index
+    live "/blog/:id", BlogLive.Show, :show
+  end
+
+  scope "/admin", BlogWeb.Admin do
+    pipe_through [:browser, :require_admin]
+
+    live "/blog", BlogLive.Index, :index
+    live "/blog/new", BlogLive.Index, :new
+    live "/blog/:id/edit", BlogLive.Index, :edit
+    live "/blog/:id", BlogLive.Show, :show
   end
 
   # Other scopes may use custom stacks.
@@ -80,6 +96,17 @@ defmodule BlogWeb.Router do
       on_mount: [{BlogWeb.UserAuth, :mount_current_user}] do
       live "/users/confirm/:token", UserConfirmationLive, :edit
       live "/users/confirm", UserConfirmationInstructionsLive, :new
+    end
+  end
+
+  defp ensure_admin(conn, _opts) do
+    if conn.assigns.current_user && conn.assigns.current_user.is_admin do
+      conn
+    else
+      conn
+      |> put_flash(:error, "You must be an administrator to access this page")
+      |> redirect(to: ~p"/")
+      |> halt()
     end
   end
 end

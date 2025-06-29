@@ -8,6 +8,11 @@ defmodule Blog.Accounts.User do
     field :hashed_password, :string, redact: true
     field :current_password, :string, virtual: true, redact: true
     field :confirmed_at, :utc_datetime
+    field :is_admin, :boolean, default: false
+    field :is_blocked, :boolean, default: false
+
+    has_many :posts, Blog.Posts.Post
+    has_many :comments, Blog.Comments.Comment
 
     timestamps(type: :utc_datetime)
   end
@@ -157,5 +162,23 @@ defmodule Blog.Accounts.User do
     else
       add_error(changeset, :current_password, "is not valid")
     end
+  end
+
+  @doc """
+  A user changeset for changing admin status.
+  """
+  def admin_changeset(user, attrs) do
+    user
+    |> cast(attrs, [:is_admin])
+    |> validate_required([:is_admin])
+  end
+
+  @doc """
+  A user changeset for changing blocked status.
+  """
+  def block_changeset(user, attrs) do
+    user
+    |> cast(attrs, [:is_blocked])
+    |> validate_required([:is_blocked])
   end
 end

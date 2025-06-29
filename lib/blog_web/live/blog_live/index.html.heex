@@ -1,0 +1,50 @@
+<div class="max-w-4xl mx-auto py-8">
+  <div class="flex justify-between items-center mb-8">
+    <h1 class="text-2xl font-bold">Blog Posts</h1>
+    <button
+      phx-click="open-modal"
+      class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+    >
+      Create New Post
+    </button>
+  </div>
+
+  <div class="space-y-6">
+    <%= for post <- @posts do %>
+      <div class="bg-white shadow rounded-lg p-6">
+        <.link navigate={~p"/blog/#{post.id}"} class="block mb-4">
+          <div class="text-gray-700"><%= post.body %></div>
+        </.link>
+        <div class="flex items-center justify-between text-sm text-gray-500">
+          <div>Posted by <%= post.user.email %></div>
+          <div class="flex items-center space-x-4">
+            <button
+              phx-click="like"
+              phx-value-id={post.id}
+              class="flex items-center space-x-1 text-blue-500 hover:text-blue-700"
+            >
+              <.icon name="hero-heart" class="h-5 w-5" />
+              <span><%= post.likes_count %></span>
+            </button>
+            <.link navigate={~p"/blog/#{post.id}"} class="text-blue-500 hover:text-blue-700">
+              View discussion →
+            </.link>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <%= if @modal_open? do %>
+    <.modal id="post-modal" show={true} on_cancel={JS.patch(~p"/blog")}>
+      <.header>New Post</.header>
+
+      <.simple_form for={@form} phx-submit="save">
+        <.input type="textarea" field={@form[:body]} label="What's on your mind?" />
+        <:actions>
+          <.button phx-disable-with="Posting...">Post</.button>
+        </:actions>
+      </.simple_form>
+    </.modal>
+  <% end %>
+</div>
