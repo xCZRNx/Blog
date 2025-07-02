@@ -42,14 +42,7 @@ defmodule BlogWeb.BlogPagesLive.AdminTableLive do
   end
 
   def mount(_params, _session, socket) do
-    IO.inspect(socket.assigns.current_user.is_admin)
-
-    if !socket.assigns.current_user.is_admin do
-      {:ok,
-       socket
-       |> put_flash(:error, "You are not authorized to access this page.")
-       |> redirect(to: ~p"/blog")}
-    else
+    if socket.assigns.current_user.is_admin do
       posts = Posts.list_posts()
 
       changeset = Post.changeset(%{})
@@ -61,11 +54,15 @@ defmodule BlogWeb.BlogPagesLive.AdminTableLive do
         |> assign_form(changeset)
 
       {:ok, socket}
+    else
+      {:ok,
+       socket
+       |> put_flash(:error, "You are not authorized to access this page.")
+       |> redirect(to: ~p"/blog")}
     end
   end
 
   def handle_event("change_status", %{"id" => post_id}, socket) do
-    IO.inspect(post_id)
     post = Posts.get_post!(post_id)
     new_status = if post.status == :active, do: :banned, else: :active
 

@@ -59,7 +59,6 @@ defmodule BlogWeb.BlogPagesLive.PostLive do
   def mount(params, _session, socket) do
     post = Posts.get_post!(params["id"]) |> Repo.preload([:user, comments: :user])
     changeset = Comment.changeset(%{})
-    IO.inspect(post.status)
 
     if connected?(socket) do
       BlogWeb.Endpoint.subscribe("comment")
