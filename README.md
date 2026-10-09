@@ -83,9 +83,6 @@ The default development config uses a local PostgreSQL setup. If your local cred
 
 For production, the app expects `DATABASE_URL` and `SECRET_KEY_BASE` to be set. See `config/runtime.exs` for the production setup.
 
-## License
-
-This project does not currently declare a license in the repository metadata.
 
 ## Learn more
 
