@@ -195,6 +195,17 @@ defmodule BlogWeb.UserAuth do
     end
   end
 
+  def redirect_if_user_is_not_admin(conn, _opts) do
+    if conn.assigns[:current_user].is_admin do
+      conn
+    else
+      conn
+      |> put_flash(:error, "You must be an admin to access this page.")
+      |> redirect(to: ~p"/")
+      |> halt()
+    end
+  end
+
   @doc """
   Used for routes that require the user to be authenticated.
 
