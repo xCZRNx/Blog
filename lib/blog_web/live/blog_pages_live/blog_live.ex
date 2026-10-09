@@ -7,7 +7,7 @@ defmodule BlogWeb.BlogPagesLive.BlogLive do
 
   def render(assigns) do
     ~H"""
-    <div class="mx-auto max-w-2xl p-6 bg-gray-100 rounded shadow-md">
+    <div class="mx-auto max-w-2xl p-6 bg-gray-100 rounded shadow-xl">
       <.header class="text-center text-2xl font-bold mb-6">
         BLOG PAGE
       </.header>
@@ -37,7 +37,7 @@ defmodule BlogWeb.BlogPagesLive.BlogLive do
               <.button
                 phx-click="like_post"
                 phx-value-id={post.id}
-                class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600"
+                class="bg-blue-200 text-white px-3 py-1 rounded hover:bg-blue-400"
               >
                 Like
               </.button>
@@ -125,6 +125,14 @@ defmodule BlogWeb.BlogPagesLive.BlogLive do
     post = Repo.preload(post, :user)
 
     {:noreply, assign(socket, posts: [post | socket.assigns.posts])}
+  end
+
+  def handle_info(%{topic: "posts", event: "update-post", payload: post}, socket) do
+    post = Repo.preload(post, :user)
+
+    posts = Enum.map(socket.assigns.posts, fn p -> if p.id == post.id, do: post, else: p end)
+
+    {:noreply, assign(socket, posts: posts)}
   end
 
   defp assign_form(socket, %Ecto.Changeset{} = changeset) do

@@ -84,6 +84,14 @@ defmodule Blog.Posts do
     post
     |> Post.likes_count_changeset(%{likes_count: post.likes_count + 1})
     |> Repo.update()
+    |> case do
+      {:ok, updated_post} ->
+        BlogWeb.Endpoint.broadcast("posts", "update-post", updated_post)
+        {:ok, updated_post}
+
+      {:error, changeset} ->
+        {:error, changeset}
+    end
   end
 
   ## Comments
